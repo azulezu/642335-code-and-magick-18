@@ -72,7 +72,7 @@ var renderBar = function (ctx, index, namePlayer, timePlayer, heightPlayerBar, c
 };
 
 
-var randomPercent = function () {
+var getRandomPercent = function () {
   return Math.floor(Math.random() * 101);
 };
 
@@ -88,7 +88,7 @@ window.renderStatistics = function (ctx, names, times) {
 
   var maxTime = Math.round(getMaxElement(times));
   for (var i = 0; i < names.length; i++) {
-    var colorBar = 'hsl(240, ' + randomPercent() + '%, 50%)';
+    var colorBar = 'hsl(240, ' + getRandomPercent() + '%, 50%)';
     if (names[i] === 'Вы') {
       colorBar = 'rgba(255, 0, 0, 1)';
     }
