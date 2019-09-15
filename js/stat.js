@@ -13,7 +13,7 @@ var FONT_SIZE = '16px';
 var lineHeight = 1.3 * parseInt(FONT_SIZE, 10);
 
 // отступ от левого края "облака"
-var marginLeft = 20;
+var marginLeft = 30;
 
 // отступ от верха "облака" для текущего блока
 // должен учитывать уже отрисованные блоки
@@ -22,7 +22,20 @@ var marginTop = 20; // начальное значение
 
 var renderCloud = function (ctx, x, y, color) {
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, CLOUD_WIDTH, CLOUD_HEIGHT);
+
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + CLOUD_WIDTH / 2, y + 5);
+  ctx.lineTo(x + CLOUD_WIDTH, y);
+  ctx.lineTo(x + CLOUD_WIDTH - 5, y + CLOUD_HEIGHT / 2);
+  ctx.lineTo(x + CLOUD_WIDTH, y + CLOUD_HEIGHT);
+  ctx.lineTo(x + CLOUD_WIDTH / 2, y + CLOUD_HEIGHT - 5);
+  ctx.lineTo(x, y + CLOUD_HEIGHT);
+  ctx.lineTo(x + 5, y + CLOUD_HEIGHT / 2);
+  ctx.closePath();
+
+  ctx.stroke();
+  ctx.fill();
 };
 
 
@@ -52,7 +65,6 @@ var getMaxElement = function (arr) {
 
 
 var renderBar = function (ctx, index, namePlayer, timePlayer, heightPlayerBar, colorBar) {
-  marginLeft = 40;
   // время игрока
   ctx.fillStyle = '#000';
   ctx.textAlign = 'center';
@@ -73,7 +85,7 @@ var renderBar = function (ctx, index, namePlayer, timePlayer, heightPlayerBar, c
 
 
 var getRandomPercent = function () {
-  return Math.floor(Math.random() * 101);
+  return Math.floor(Math.random() * 100 + 1);
 };
 
 
@@ -85,6 +97,7 @@ window.renderStatistics = function (ctx, names, times) {
 
   renderTitle(ctx, TITLE);
   marginTop += 2 * lineHeight;
+  marginLeft = 60;
 
   var maxTime = Math.round(getMaxElement(times));
   for (var i = 0; i < names.length; i++) {
@@ -97,5 +110,6 @@ window.renderStatistics = function (ctx, names, times) {
 
   // вернуть начальные значения
   marginTop = 20;
+  marginLeft = 30;
   ctx.fillStyle = currentColor;
 };
