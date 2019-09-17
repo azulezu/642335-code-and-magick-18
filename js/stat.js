@@ -1,6 +1,8 @@
 'use strict';
 
 var TITLE = 'Ура вы победили!\nСписок результатов:';
+var COLOR_WHITE = '#fff';
+var COLOR_BLACK = '#000';
 
 var fontStyle = {
   SIZE: '16px',
@@ -84,25 +86,26 @@ var renderBar = function (ctx, index, barScaleRate, name, time) {
   textPosition.y = barSize.HEIGHT - barHeight - fontStyle.getLineHeight();
   textPosition.alignX = 'center';
   textPosition.alignY = 'top';
-  renderText(ctx, Math.round(time), textPosition, fontStyle, '#000');
+  renderText(ctx, Math.round(time), textPosition, fontStyle, COLOR_BLACK);
 
   // имя игрока
   textPosition.x = index * (barSize.GAP + barSize.WIDTH);
   textPosition.y = barSize.HEIGHT + fontStyle.getLineHeight();
   textPosition.alignX = 'start';
   textPosition.alignY = 'bottom';
-  renderText(ctx, name, textPosition, fontStyle, '#000');
+  renderText(ctx, name, textPosition, fontStyle, COLOR_BLACK);
 };
 
-
 var getMaxElement = function (arr) {
-  return Math.max.apply(null, arr);
+  if (arr.length > 0) {
+    return Math.max.apply(null, arr);
+  }
+  return undefined;
 };
 
 var getRandomPercent = function () {
   return Math.floor(Math.random() * 100 + 1);
 };
-
 
 window.renderStatistics = function (ctx, names, times) {
   var textPosition = {
@@ -120,18 +123,18 @@ window.renderStatistics = function (ctx, names, times) {
 
   // нарисовать облако с тенью
   renderCloud(ctx, cloudSize.getShadow(10), 'rgba(0, 0, 0, 0.7)');
-  renderCloud(ctx, cloudSize, '#fff');
+  renderCloud(ctx, cloudSize, COLOR_WHITE);
 
   // вывести заголовок
   textPosition.x = cloudSize.X + cloudSize.WIDTH / 2;
   textPosition.y = cloudSize.Y + MARGIN_TOP;
   textPosition.alignX = 'center';
-  renderText(ctx, lines[0], textPosition, fontStyle, '#000');
+  renderText(ctx, lines[0], textPosition, fontStyle, COLOR_BLACK);
 
   textPosition.x = cloudSize.X + MARGIN_LEFT;
   textPosition.y += fontStyle.getLineHeight();
   textPosition.alignX = 'start';
-  renderText(ctx, lines[1], textPosition, fontStyle, '#000');
+  renderText(ctx, lines[1], textPosition, fontStyle, COLOR_BLACK);
 
   // перености начало координат в верхний левый угол диаграммы
   ctx.translate(cloudSize.X + 2 * MARGIN_LEFT, cloudSize.Y + MARGIN_TOP + 3 * fontStyle.getLineHeight());
