@@ -1,88 +1,103 @@
 'use strict';
 
-var CLOUD_WIDTH = 420;
-var CLOUD_HEIGHT = 270;
-var CLOUD_X = 100;
-var CLOUD_Y = 10;
 var TITLE = 'Ура вы победили!\nСписок результатов:';
-var GAP = 50;
-var BAR_WIDTH = 40;
-var BAR_HEIGHT = 150;
 
-var FONT_SIZE = '16px';
-var lineHeight = 1.3 * parseInt(FONT_SIZE, 10);
+var fontStyle = {
+  SIZE: '16px',
+  FAMILY: 'PT Mono',
+  getLineHeight: function () {
+    return 1.3 * parseInt(this.SIZE, 10);
+  },
+  getFont: function () {
+    return this.SIZE + ' ' + this.FAMILY;
+  },
+};
 
 // отступ от левого края "облака"
-var marginLeft = 30;
+var MARGIN_LEFT = 30;
+// отступ от верха "облака"
+var MARGIN_TOP = 20;
 
-// отступ от верха "облака" для текущего блока
-// должен учитывать уже отрисованные блоки
-var marginTop = 20; // начальное значение
+var cloudSize = {
+  X: 100,
+  Y: 10,
+  WIDTH: 420,
+  HEIGHT: 270,
 
+  getShadow: function (offset) {
+    var shadowSize = {};
 
-var renderCloud = function (ctx, x, y, color) {
+    for (var prop in this) {
+      if (typeof prop !== 'function') {
+        shadowSize[prop] = this[prop];
+      }
+    }
+    shadowSize.X += offset;
+    shadowSize.Y += offset;
+    return shadowSize;
+  },
+};
+
+var barSize = {
+  GAP: 50,
+  WIDTH: 40,
+  HEIGHT: 150,
+};
+
+var renderCloud = function (ctx, cloud, color) {
   ctx.fillStyle = color;
 
   ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x + CLOUD_WIDTH / 2, y + 5);
-  ctx.lineTo(x + CLOUD_WIDTH, y);
-  ctx.lineTo(x + CLOUD_WIDTH - 5, y + CLOUD_HEIGHT / 2);
-  ctx.lineTo(x + CLOUD_WIDTH, y + CLOUD_HEIGHT);
-  ctx.lineTo(x + CLOUD_WIDTH / 2, y + CLOUD_HEIGHT - 5);
-  ctx.lineTo(x, y + CLOUD_HEIGHT);
-  ctx.lineTo(x + 5, y + CLOUD_HEIGHT / 2);
+  ctx.moveTo(cloud.X, cloud.Y);
+  ctx.lineTo(cloud.X + cloud.WIDTH / 2, cloud.Y + 5);
+  ctx.lineTo(cloud.X + cloud.WIDTH, cloud.Y);
+  ctx.lineTo(cloud.X + cloud.WIDTH - 5, cloud.Y + cloud.HEIGHT / 2);
+  ctx.lineTo(cloud.X + cloud.WIDTH, cloud.Y + cloud.HEIGHT);
+  ctx.lineTo(cloud.X + cloud.WIDTH / 2, cloud.Y + cloud.HEIGHT - 5);
+  ctx.lineTo(cloud.X, cloud.Y + cloud.HEIGHT);
+  ctx.lineTo(cloud.X + 5, cloud.Y + cloud.HEIGHT / 2);
   ctx.closePath();
 
   ctx.stroke();
   ctx.fill();
 };
 
+var renderText = function (ctx, txt, txtPosition, font, color) {
+  ctx.fillStyle = color;
+  ctx.font = font.getFont();
+  ctx.textAlign = txtPosition.alignX;
+  ctx.textBaseline = txtPosition.alignY;
+  ctx.fillText(txt, txtPosition.x, txtPosition.y);
+};
 
-var renderTitle = function (ctx, txt) {
-  var lines = txt.split('\n');
-  ctx.fillStyle = 'black';
-  ctx.font = FONT_SIZE + ' PT Mono';
-  ctx.textBaseline = 'top';
+var renderBar = function (ctx, index, barScaleRate, name, time) {
+  var textPosition = {};
+  var barHeight = time * barScaleRate;
+  var barColor = (name === 'Вы') ? 'rgba(255, 0, 0, 1)' : 'hsl(240, ' + getRandomPercent() + '%, 50%)';
 
-  ctx.textAlign = 'center';
-  ctx.fillText(lines[0], CLOUD_X + CLOUD_WIDTH / 2, CLOUD_Y + marginTop);
+  // столбик диаграммы
+  ctx.fillStyle = barColor;
+  ctx.fillRect(index * (barSize.GAP + barSize.WIDTH), barSize.HEIGHT - barHeight, barSize.WIDTH, barHeight);
 
-  ctx.textAlign = 'start';
-  ctx.fillText(lines[1], CLOUD_X + marginLeft, CLOUD_Y + marginTop + lineHeight);
+  // время игрока
+  textPosition.x = index * (barSize.GAP + barSize.WIDTH) + barSize.WIDTH / 2;
+  textPosition.y = barSize.HEIGHT - barHeight - fontStyle.getLineHeight();
+  textPosition.alignX = 'center';
+  textPosition.alignY = 'top';
+  renderText(ctx, Math.round(time), textPosition, fontStyle, '#000');
+
+  // имя игрока
+  textPosition.x = index * (barSize.GAP + barSize.WIDTH);
+  textPosition.y = barSize.HEIGHT + fontStyle.getLineHeight();
+  textPosition.alignX = 'start';
+  textPosition.alignY = 'bottom';
+  renderText(ctx, name, textPosition, fontStyle, '#000');
 };
 
 
 var getMaxElement = function (arr) {
-  var maxElement = -Infinity;
-  for (var i = 0; i < arr.length; i++) {
-    if (arr[i] > maxElement) {
-      maxElement = arr[i];
-    }
-  }
-  return maxElement;
+  return Math.max.apply(null, arr);
 };
-
-
-var renderBar = function (ctx, index, namePlayer, timePlayer, heightPlayerBar, colorBar) {
-  // время игрока
-  ctx.fillStyle = '#000';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillText(Math.round(timePlayer), CLOUD_X + marginLeft + index * (BAR_WIDTH + GAP) + BAR_WIDTH / 2, CLOUD_Y + marginTop + BAR_HEIGHT - heightPlayerBar);
-
-  // столбик диаграммы
-  ctx.fillStyle = colorBar;
-  ctx.fillRect(CLOUD_X + marginLeft + index * (BAR_WIDTH + GAP), CLOUD_Y + marginTop + lineHeight + BAR_HEIGHT - heightPlayerBar,
-      BAR_WIDTH, heightPlayerBar);
-
-  // имя игрока
-  ctx.fillStyle = '#000';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'bottom';
-  ctx.fillText(namePlayer, CLOUD_X + marginLeft + index * (BAR_WIDTH + GAP), CLOUD_Y + marginTop + BAR_HEIGHT + 2 * lineHeight);
-};
-
 
 var getRandomPercent = function () {
   return Math.floor(Math.random() * 100 + 1);
@@ -90,26 +105,46 @@ var getRandomPercent = function () {
 
 
 window.renderStatistics = function (ctx, names, times) {
-  var currentColor = ctx.fillStyle;
+  var textPosition = {
+    x: 0,
+    y: 0,
+    alignX: 'start',
+    alignY: 'top',
+  };
 
-  renderCloud(ctx, CLOUD_X + 10, CLOUD_Y + 10, 'rgba(0, 0, 0, 0.7)');
-  renderCloud(ctx, CLOUD_X, CLOUD_Y, '#fff');
+  // разбить текст на строки
+  var lines = TITLE.split('\n');
 
-  renderTitle(ctx, TITLE);
-  marginTop += 2 * lineHeight;
-  marginLeft = 60;
+  // сохранить исходные настройки
+  ctx.save();
 
+  // нарисовать облако с тенью
+  renderCloud(ctx, cloudSize.getShadow(10), 'rgba(0, 0, 0, 0.7)');
+  renderCloud(ctx, cloudSize, '#fff');
+
+  // вывести заголовок
+  textPosition.x = cloudSize.X + cloudSize.WIDTH / 2;
+  textPosition.y = cloudSize.Y + MARGIN_TOP;
+  textPosition.alignX = 'center';
+  renderText(ctx, lines[0], textPosition, fontStyle, '#000');
+
+  textPosition.x = cloudSize.X + MARGIN_LEFT;
+  textPosition.y += fontStyle.getLineHeight();
+  textPosition.alignX = 'start';
+  renderText(ctx, lines[1], textPosition, fontStyle, '#000');
+
+  // перености начало координат в верхний левый угол диаграммы
+  ctx.translate(cloudSize.X + 2 * MARGIN_LEFT, cloudSize.Y + MARGIN_TOP + 3 * fontStyle.getLineHeight());
+
+  // определить параметры диаграммы
   var maxTime = Math.round(getMaxElement(times));
+  var barScaleRate = barSize.HEIGHT / maxTime;
+
+  // вывести диаграмму
   for (var i = 0; i < names.length; i++) {
-    var colorBar = 'hsl(240, ' + getRandomPercent() + '%, 50%)';
-    if (names[i] === 'Вы') {
-      colorBar = 'rgba(255, 0, 0, 1)';
-    }
-    renderBar(ctx, i, names[i], times[i], (times[i] * BAR_HEIGHT / maxTime), colorBar);
+    renderBar(ctx, i, barScaleRate, names[i], times[i]);
   }
 
   // вернуть начальные значения
-  marginTop = 20;
-  marginLeft = 30;
-  ctx.fillStyle = currentColor;
+  ctx.restore();
 };
