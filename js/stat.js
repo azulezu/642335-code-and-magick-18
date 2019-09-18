@@ -1,19 +1,12 @@
 'use strict';
 
-var TITLE = 'Ура вы победили!\nСписок результатов:';
-
-var fontStyle = {
-  SIZE: '16px',
-  FAMILY: 'PT Mono',
-  LINE_HEIGHT: 21,
-  COLOR: '#000',
-};
-
 // отступ от левого края "облака"
 var MARGIN_LEFT = 30;
 // отступ от верха "облака"
 var MARGIN_TOP = 20;
 
+
+// значения параметров "облака" и тени
 var cloudParams = {
   X: 100,
   Y: 10,
@@ -32,12 +25,38 @@ var shadowParams = {
   COLOR: 'rgba(0, 0, 0, 0.7)',
 };
 
+
+// значения параметров заголовка
+var TITLE = 'Ура вы победили!\nСписок результатов:';
+
+var titleParams = {
+  X: cloudParams.X + MARGIN_LEFT,
+  Y: cloudParams.Y + MARGIN_TOP,
+  alignX: 'start',
+  alignY: 'top',
+};
+
+var fontStyle = {
+  SIZE: '16px',
+  FAMILY: 'PT Mono',
+  LINE_HEIGHT: 20,
+  COLOR: '#000',
+};
+
+// значения параметров диаграммы
+var chartStart = {
+  X: cloudParams.X + 2 * MARGIN_LEFT,
+  Y: cloudParams.Y + MARGIN_TOP + 2 * fontStyle.LINE_HEIGHT,
+};
+
 var barSize = {
   GAP: 50,
   WIDTH: 40,
   HEIGHT: 150,
 };
 
+
+// функции вывода
 var renderCloud = function (ctx, cloud) {
   ctx.fillStyle = cloud.COLOR;
 
@@ -45,49 +64,56 @@ var renderCloud = function (ctx, cloud) {
   ctx.moveTo(cloud.X, cloud.Y);
   ctx.lineTo(cloud.X + cloud.WIDTH / 2, cloud.Y + 5);
   ctx.lineTo(cloud.X + cloud.WIDTH, cloud.Y);
-  ctx.lineTo(cloud.X + cloud.WIDTH - 15, cloud.Y + cloud.HEIGHT / 2);
+  ctx.lineTo(cloud.X + cloud.WIDTH - 10, cloud.Y + cloud.HEIGHT / 2);
   ctx.lineTo(cloud.X + cloud.WIDTH, cloud.Y + cloud.HEIGHT);
   ctx.lineTo(cloud.X + cloud.WIDTH / 2, cloud.Y + cloud.HEIGHT - 5);
   ctx.lineTo(cloud.X, cloud.Y + cloud.HEIGHT);
-  ctx.lineTo(cloud.X + 15, cloud.Y + cloud.HEIGHT / 2);
+  ctx.lineTo(cloud.X + 10, cloud.Y + cloud.HEIGHT / 2);
   ctx.closePath();
 
   ctx.stroke();
   ctx.fill();
 };
 
-var renderText = function (ctx, txt, txtPosition, font) {
-  ctx.fillStyle = font.COLOR;
+var renderText = function (ctx, txt, txtParams, font) {
   ctx.font = font.SIZE + ' ' + font.FAMILY;
-  ctx.textAlign = txtPosition.alignX;
-  ctx.textBaseline = txtPosition.alignY;
-  ctx.fillText(txt, txtPosition.x, txtPosition.y);
+  ctx.fillStyle = font.COLOR;
+  ctx.textAlign = txtParams.alignX;
+  ctx.textBaseline = txtParams.alignY;
+  txt.split('\n').forEach(function (line, index) {
+    ctx.fillText(line, txtParams.X, txtParams.Y + index * font.LINE_HEIGHT);
+  });
 };
 
-var renderBar = function (ctx, index, maxScale, name, time) {
-  var textPosition = {};
-  var barHeight = Math.round(time * barSize.HEIGHT / maxScale);
-  var barColor = (name === 'Вы') ? 'rgba(255, 0, 0, 1)' : 'hsl(240, ' + getRandomPercent() + '%, 50%)';
+var renderBar = function (ctx, index, maxScale, label, value) {
+  var barHeight = Math.round(value * barSize.HEIGHT / maxScale);
+  var labelParams = {
+    X: index * (barSize.GAP + barSize.WIDTH),
+    Y: barSize.HEIGHT + 2 * fontStyle.LINE_HEIGHT,
+    alignX: 'start',
+    alignY: 'bottom',
+  };
+  var valueParams = {
+    X: index * (barSize.GAP + barSize.WIDTH) + barSize.WIDTH / 2,
+    Y: barSize.HEIGHT - barHeight,
+    alignX: 'center',
+    alignY: 'top',
+  };
+  var barColor = (label === 'Вы') ? 'rgba(255, 0, 0, 1)' : 'hsl(240, ' + getRandomPercent() + '%, 50%)';
 
   // столбик диаграммы
   ctx.fillStyle = barColor;
-  ctx.fillRect(index * (barSize.GAP + barSize.WIDTH), barSize.HEIGHT - barHeight, barSize.WIDTH, barHeight);
+  ctx.fillRect(index * (barSize.GAP + barSize.WIDTH), fontStyle.LINE_HEIGHT + barSize.HEIGHT - barHeight, barSize.WIDTH, barHeight);
 
   // время игрока
-  textPosition.x = index * (barSize.GAP + barSize.WIDTH) + barSize.WIDTH / 2;
-  textPosition.y = barSize.HEIGHT - barHeight - fontStyle.LINE_HEIGHT;
-  textPosition.alignX = 'center';
-  textPosition.alignY = 'top';
-  renderText(ctx, Math.round(time), textPosition, fontStyle);
+  renderText(ctx, Math.round(value).toString(), valueParams, fontStyle);
 
   // имя игрока
-  textPosition.x = index * (barSize.GAP + barSize.WIDTH);
-  textPosition.y = barSize.HEIGHT + fontStyle.LINE_HEIGHT;
-  textPosition.alignX = 'start';
-  textPosition.alignY = 'bottom';
-  renderText(ctx, name, textPosition, fontStyle);
+  renderText(ctx, label, labelParams, fontStyle);
 };
 
+
+// вспомогательные функции
 var getMaxElement = function (arr) {
   return Math.max.apply(null, arr);
 };
@@ -96,18 +122,10 @@ var getRandomPercent = function () {
   return Math.floor(Math.random() * 100 + 1);
 };
 
+
+// основная функция
 window.renderStatistics = function (ctx, names, times) {
-  var textPosition = {
-    x: 0,
-    y: 0,
-    alignX: 'start',
-    alignY: 'top',
-  };
-
-  // разбить текст на строки
-  var lines = TITLE.split('\n');
-
-  // сохранить исходные настройки
+  // сохранить исходные настройки рисования
   ctx.save();
 
   // нарисовать облако с тенью
@@ -115,20 +133,12 @@ window.renderStatistics = function (ctx, names, times) {
   renderCloud(ctx, cloudParams);
 
   // вывести заголовок
-  textPosition.x = cloudParams.X + cloudParams.WIDTH / 2;
-  textPosition.y = cloudParams.Y + MARGIN_TOP;
-  textPosition.alignX = 'center';
-  renderText(ctx, lines[0], textPosition, fontStyle);
-
-  textPosition.x = cloudParams.X + MARGIN_LEFT;
-  textPosition.y += fontStyle.LINE_HEIGHT;
-  textPosition.alignX = 'start';
-  renderText(ctx, lines[1], textPosition, fontStyle);
+  renderText(ctx, TITLE, titleParams, fontStyle);
 
   // перенести начало координат в верхний левый угол диаграммы
-  ctx.translate(cloudParams.X + 2 * MARGIN_LEFT, cloudParams.Y + MARGIN_TOP + 3 * fontStyle.LINE_HEIGHT);
+  ctx.translate(chartStart.X, chartStart.Y);
 
-  // определить параметры диаграммы
+  // определить масштаб диаграммы
   var maxTime = getMaxElement(times);
 
   // вывести диаграмму
@@ -136,6 +146,6 @@ window.renderStatistics = function (ctx, names, times) {
     renderBar(ctx, i, maxTime, names[i], times[i]);
   }
 
-  // вернуть начальные значения
+  // вернуть начальные настройки рисования
   ctx.restore();
 };
