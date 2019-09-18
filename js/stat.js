@@ -1,16 +1,12 @@
 'use strict';
 
 var TITLE = 'Ура вы победили!\nСписок результатов:';
-var COLOR_WHITE = '#fff';
-var COLOR_BLACK = '#000';
 
 var fontStyle = {
   SIZE: '16px',
   FAMILY: 'PT Mono',
-  // getLineHeight: function () {
-  //   return 1.3 * parseInt(this.SIZE, 10);
-  // },
   LINE_HEIGHT: 21,
+  COLOR: '#000',
 };
 
 // отступ от левого края "облака"
@@ -18,33 +14,22 @@ var MARGIN_LEFT = 30;
 // отступ от верха "облака"
 var MARGIN_TOP = 20;
 
-var cloudSize = {
+var cloudParams = {
   X: 100,
   Y: 10,
   WIDTH: 420,
   HEIGHT: 270,
-  //
-  // getShadow: function (offset) {
-  //   var shadowSize = {};
-  //
-  //   for (var prop in this) {
-  //     if (typeof prop !== 'function') {
-  //       shadowSize[prop] = this[prop];
-  //     }
-  //   }
-  //   shadowSize.X += offset;
-  //   shadowSize.Y += offset;
-  //   return shadowSize;
-  // },
+  COLOR: '#fff',
 };
 
-var shadowOffset = 10;
+var SHADOW_OFFSET = 10;
 
-var shadowSize = {
-  X: cloudSize.X + shadowOffset,
-  Y: cloudSize.Y + shadowOffset,
-  WIDTH: cloudSize.WIDTH,
-  HEIGHT: cloudSize.HEIGHT,
+var shadowParams = {
+  X: cloudParams.X + SHADOW_OFFSET,
+  Y: cloudParams.Y + SHADOW_OFFSET,
+  WIDTH: cloudParams.WIDTH,
+  HEIGHT: cloudParams.HEIGHT,
+  COLOR: 'rgba(0, 0, 0, 0.7)',
 };
 
 var barSize = {
@@ -53,27 +38,27 @@ var barSize = {
   HEIGHT: 150,
 };
 
-var renderCloud = function (ctx, cloud, color) {
-  ctx.fillStyle = color;
+var renderCloud = function (ctx, cloud) {
+  ctx.fillStyle = cloud.COLOR;
 
   ctx.beginPath();
   ctx.moveTo(cloud.X, cloud.Y);
   ctx.lineTo(cloud.X + cloud.WIDTH / 2, cloud.Y + 5);
   ctx.lineTo(cloud.X + cloud.WIDTH, cloud.Y);
-  ctx.lineTo(cloud.X + cloud.WIDTH - 5, cloud.Y + cloud.HEIGHT / 2);
+  ctx.lineTo(cloud.X + cloud.WIDTH - 15, cloud.Y + cloud.HEIGHT / 2);
   ctx.lineTo(cloud.X + cloud.WIDTH, cloud.Y + cloud.HEIGHT);
   ctx.lineTo(cloud.X + cloud.WIDTH / 2, cloud.Y + cloud.HEIGHT - 5);
   ctx.lineTo(cloud.X, cloud.Y + cloud.HEIGHT);
-  ctx.lineTo(cloud.X + 5, cloud.Y + cloud.HEIGHT / 2);
+  ctx.lineTo(cloud.X + 15, cloud.Y + cloud.HEIGHT / 2);
   ctx.closePath();
 
   ctx.stroke();
   ctx.fill();
 };
 
-var renderText = function (ctx, txt, txtPosition, font, color) {
-  ctx.fillStyle = color;
-  ctx.font = fontStyle.SIZE + ' ' + fontStyle.FAMILY;
+var renderText = function (ctx, txt, txtPosition, font) {
+  ctx.fillStyle = font.COLOR;
+  ctx.font = font.SIZE + ' ' + font.FAMILY;
   ctx.textAlign = txtPosition.alignX;
   ctx.textBaseline = txtPosition.alignY;
   ctx.fillText(txt, txtPosition.x, txtPosition.y);
@@ -93,14 +78,14 @@ var renderBar = function (ctx, index, maxScale, name, time) {
   textPosition.y = barSize.HEIGHT - barHeight - fontStyle.LINE_HEIGHT;
   textPosition.alignX = 'center';
   textPosition.alignY = 'top';
-  renderText(ctx, Math.round(time), textPosition, fontStyle, COLOR_BLACK);
+  renderText(ctx, Math.round(time), textPosition, fontStyle);
 
   // имя игрока
   textPosition.x = index * (barSize.GAP + barSize.WIDTH);
   textPosition.y = barSize.HEIGHT + fontStyle.LINE_HEIGHT;
   textPosition.alignX = 'start';
   textPosition.alignY = 'bottom';
-  renderText(ctx, name, textPosition, fontStyle, COLOR_BLACK);
+  renderText(ctx, name, textPosition, fontStyle);
 };
 
 var getMaxElement = function (arr) {
@@ -126,23 +111,22 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.save();
 
   // нарисовать облако с тенью
-  // renderCloud(ctx, cloudSize.getShadow(10), 'rgba(0, 0, 0, 0.7)');
-  renderCloud(ctx, shadowSize, 'rgba(0, 0, 0, 0.7)');
-  renderCloud(ctx, cloudSize, COLOR_WHITE);
+  renderCloud(ctx, shadowParams);
+  renderCloud(ctx, cloudParams);
 
   // вывести заголовок
-  textPosition.x = cloudSize.X + cloudSize.WIDTH / 2;
-  textPosition.y = cloudSize.Y + MARGIN_TOP;
+  textPosition.x = cloudParams.X + cloudParams.WIDTH / 2;
+  textPosition.y = cloudParams.Y + MARGIN_TOP;
   textPosition.alignX = 'center';
-  renderText(ctx, lines[0], textPosition, fontStyle, COLOR_BLACK);
+  renderText(ctx, lines[0], textPosition, fontStyle);
 
-  textPosition.x = cloudSize.X + MARGIN_LEFT;
+  textPosition.x = cloudParams.X + MARGIN_LEFT;
   textPosition.y += fontStyle.LINE_HEIGHT;
   textPosition.alignX = 'start';
-  renderText(ctx, lines[1], textPosition, fontStyle, COLOR_BLACK);
+  renderText(ctx, lines[1], textPosition, fontStyle);
 
-  // перености начало координат в верхний левый угол диаграммы
-  ctx.translate(cloudSize.X + 2 * MARGIN_LEFT, cloudSize.Y + MARGIN_TOP + 3 * fontStyle.LINE_HEIGHT);
+  // перенести начало координат в верхний левый угол диаграммы
+  ctx.translate(cloudParams.X + 2 * MARGIN_LEFT, cloudParams.Y + MARGIN_TOP + 3 * fontStyle.LINE_HEIGHT);
 
   // определить параметры диаграммы
   var maxTime = getMaxElement(times);
