@@ -37,14 +37,15 @@ var titleParams = {
 var fontStyle = {
   SIZE: '16px',
   FAMILY: 'PT Mono',
-  LINE_HEIGHT: 20,
   COLOR: '#000',
 };
+
+var LINE_HEIGHT = 20;
 
 // значения параметров диаграммы
 var chartStart = {
   X: cloudParams.X + 2 * MARGIN_LEFT,
-  Y: cloudParams.Y + MARGIN_TOP + 2 * fontStyle.LINE_HEIGHT,
+  Y: cloudParams.Y + MARGIN_TOP + 2 * LINE_HEIGHT,
 };
 
 var barSize = {
@@ -73,9 +74,9 @@ var renderCloud = function (ctx, cloud) {
   ctx.fill();
 };
 
-var renderText = function (ctx, txt, font, x, y, alignH, alignV) {
-  ctx.font = font.SIZE + ' ' + font.FAMILY;
-  ctx.fillStyle = font.COLOR;
+var renderText = function (ctx, txt, x, y, alignH, alignV) {
+  ctx.font = fontStyle.SIZE + ' ' + fontStyle.FAMILY;
+  ctx.fillStyle = fontStyle.COLOR;
   ctx.textAlign = (alignH) ? alignH : 'start';
   ctx.textBaseline = (alignV) ? alignV : 'top';
   ctx.fillText(txt, x, y);
@@ -85,7 +86,7 @@ var renderBar = function (ctx, index, maxScale, playerName, playerTime) {
   var barHeight = Math.round(playerTime * barSize.HEIGHT / maxScale);
   var barLeft = index * (barSize.GAP + barSize.WIDTH);
   // начало отсчета - значение над столбиком
-  var barTop = barSize.HEIGHT - barHeight + fontStyle.LINE_HEIGHT;
+  var barTop = barSize.HEIGHT - barHeight + LINE_HEIGHT;
 
   var barColor = (playerName === 'Вы') ? 'rgba(255, 0, 0, 1)' : 'hsl(240, ' + getRandomPercent() + '%, 50%)';
 
@@ -94,10 +95,10 @@ var renderBar = function (ctx, index, maxScale, playerName, playerTime) {
   ctx.fillRect(barLeft, barTop, barSize.WIDTH, barHeight);
 
   // время игрока
-  renderText(ctx, Math.round(playerTime).toString(), fontStyle, barLeft + barSize.WIDTH / 2, barTop - fontStyle.LINE_HEIGHT, 'center');
+  renderText(ctx, Math.round(playerTime).toString(), barLeft + barSize.WIDTH / 2, barTop - LINE_HEIGHT, 'center');
 
   // имя игрока
-  renderText(ctx, playerName, fontStyle, barLeft, barSize.HEIGHT + 2 * fontStyle.LINE_HEIGHT, 'start', 'bottom');
+  renderText(ctx, playerName, barLeft, barSize.HEIGHT + 2 * LINE_HEIGHT, 'start', 'bottom');
 };
 
 
@@ -122,8 +123,8 @@ window.renderStatistics = function (ctx, names, times) {
 
   // вывести заголовок
   var lines = TITLE.split('\n');
-  renderText(ctx, lines[0], fontStyle, titleParams.X, titleParams.Y);
-  renderText(ctx, lines[1], fontStyle, titleParams.X, titleParams.Y + fontStyle.LINE_HEIGHT);
+  renderText(ctx, lines[0], titleParams.X, titleParams.Y);
+  renderText(ctx, lines[1], titleParams.X, titleParams.Y + LINE_HEIGHT);
 
   // перенести начало координат в верхний левый угол диаграммы
   ctx.translate(chartStart.X, chartStart.Y);
