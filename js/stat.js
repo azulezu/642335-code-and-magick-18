@@ -32,8 +32,6 @@ var TITLE = 'Ура вы победили!\nСписок результатов:
 var titleParams = {
   X: cloudParams.X + MARGIN_LEFT,
   Y: cloudParams.Y + MARGIN_TOP,
-  alignX: 'start',
-  alignY: 'top',
 };
 
 var fontStyle = {
@@ -75,41 +73,33 @@ var renderCloud = function (ctx, cloud) {
   ctx.fill();
 };
 
-var renderText = function (ctx, txt, txtParams, font) {
+var renderText = function (ctx, txt, font, x, y, alignH, alignV) {
   ctx.font = font.SIZE + ' ' + font.FAMILY;
   ctx.fillStyle = font.COLOR;
-  ctx.textAlign = txtParams.alignX;
-  ctx.textBaseline = txtParams.alignY;
+  ctx.textAlign = (alignH) ? alignH : 'start';
+  ctx.textBaseline = (alignV) ? alignV : 'top';
   txt.split('\n').forEach(function (line, index) {
-    ctx.fillText(line, txtParams.X, txtParams.Y + index * font.LINE_HEIGHT);
+    ctx.fillText(line, x, y + index * font.LINE_HEIGHT);
   });
 };
 
-var renderBar = function (ctx, index, maxScale, label, value) {
-  var barHeight = Math.round(value * barSize.HEIGHT / maxScale);
-  var labelParams = {
-    X: index * (barSize.GAP + barSize.WIDTH),
-    Y: barSize.HEIGHT + 2 * fontStyle.LINE_HEIGHT,
-    alignX: 'start',
-    alignY: 'bottom',
-  };
-  var valueParams = {
-    X: index * (barSize.GAP + barSize.WIDTH) + barSize.WIDTH / 2,
-    Y: barSize.HEIGHT - barHeight,
-    alignX: 'center',
-    alignY: 'top',
-  };
-  var barColor = (label === 'Вы') ? 'rgba(255, 0, 0, 1)' : 'hsl(240, ' + getRandomPercent() + '%, 50%)';
+var renderBar = function (ctx, index, maxScale, playerName, playerTime) {
+  var barHeight = Math.round(playerTime * barSize.HEIGHT / maxScale);
+  var barLeft = index * (barSize.GAP + barSize.WIDTH);
+  // начало отсчета - значение над столбиком
+  var barTop = barSize.HEIGHT - barHeight + fontStyle.LINE_HEIGHT;
+
+  var barColor = (playerName === 'Вы') ? 'rgba(255, 0, 0, 1)' : 'hsl(240, ' + getRandomPercent() + '%, 50%)';
 
   // столбик диаграммы
   ctx.fillStyle = barColor;
-  ctx.fillRect(index * (barSize.GAP + barSize.WIDTH), fontStyle.LINE_HEIGHT + barSize.HEIGHT - barHeight, barSize.WIDTH, barHeight);
+  ctx.fillRect(barLeft, barTop, barSize.WIDTH, barHeight);
 
   // время игрока
-  renderText(ctx, Math.round(value).toString(), valueParams, fontStyle);
+  renderText(ctx, Math.round(playerTime).toString(), fontStyle, barLeft + barSize.WIDTH / 2, barTop - fontStyle.LINE_HEIGHT, 'center');
 
   // имя игрока
-  renderText(ctx, label, labelParams, fontStyle);
+  renderText(ctx, playerName, fontStyle, barLeft, barSize.HEIGHT + 2 * fontStyle.LINE_HEIGHT, 'start', 'bottom');
 };
 
 
@@ -133,7 +123,7 @@ window.renderStatistics = function (ctx, names, times) {
   renderCloud(ctx, cloudParams);
 
   // вывести заголовок
-  renderText(ctx, TITLE, titleParams, fontStyle);
+  renderText(ctx, TITLE, fontStyle, titleParams.X, titleParams.Y);
 
   // перенести начало координат в верхний левый угол диаграммы
   ctx.translate(chartStart.X, chartStart.Y);
