@@ -78,9 +78,7 @@ var renderText = function (ctx, txt, font, x, y, alignH, alignV) {
   ctx.fillStyle = font.COLOR;
   ctx.textAlign = (alignH) ? alignH : 'start';
   ctx.textBaseline = (alignV) ? alignV : 'top';
-  txt.split('\n').forEach(function (line, index) {
-    ctx.fillText(line, x, y + index * font.LINE_HEIGHT);
-  });
+  ctx.fillText(txt, x, y);
 };
 
 var renderBar = function (ctx, index, maxScale, playerName, playerTime) {
@@ -123,7 +121,9 @@ window.renderStatistics = function (ctx, names, times) {
   renderCloud(ctx, cloudParams);
 
   // вывести заголовок
-  renderText(ctx, TITLE, fontStyle, titleParams.X, titleParams.Y);
+  var lines = TITLE.split('\n');
+  renderText(ctx, lines[0], fontStyle, titleParams.X, titleParams.Y);
+  renderText(ctx, lines[1], fontStyle, titleParams.X, titleParams.Y + fontStyle.LINE_HEIGHT);
 
   // перенести начало координат в верхний левый угол диаграммы
   ctx.translate(chartStart.X, chartStart.Y);
