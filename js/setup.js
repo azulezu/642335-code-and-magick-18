@@ -2,6 +2,7 @@
 
 var COUNT = 4;
 
+// случайное число от 0 до max
 var getRandom = function (max) {
   return Math.floor(Math.random() * (max + 1));
 };
@@ -41,26 +42,18 @@ var createElement = function (template, arrElement) {
   return element;
 };
 
-
 // функция заполнения блока DOM-элементами на основе массива JS-объектов
-var fillContainer = function (containerElement, template, arr) {
+var fillContainer = function (template, arr) {
+  var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < arr.length; i++) {
     var wizardElement = createElement(template, arr[i]);
-    containerElement.appendChild(wizardElement);
+    fragment.appendChild(wizardElement);
   }
+  return fragment;
 };
 
-// <template id="similar-wizard-template" style="display: none">
-//   <div class="setup-similar-item">
-//     <div class="setup-similar-content">
-//       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62 86" class="setup-similar-wizard">
-//       </svg>
-//     </div>
-//     <p class="setup-similar-label">Петр Петров</p>
-//   </div>
-// </template>
-// ---------------------------------------
+// ----------------------------------------------
 
 var userDialog = document.querySelector('.setup');
 if (userDialog) {
@@ -73,7 +66,7 @@ if (userDialog) {
   // элемент-контейнер
   var similarListElement = document.querySelector('.setup-similar-list');
   // заполнить список внутри контейнера
-  fillContainer(similarListElement, similarWizardTemplate, wizards);
+  similarListElement.appendChild(fillContainer(similarWizardTemplate, wizards));
   // показать контейнер с персонажами
   var setupSimilarElement = document.querySelector('.setup-similar');
   setupSimilarElement.classList.remove('hidden');
