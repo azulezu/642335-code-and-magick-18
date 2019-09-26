@@ -10,10 +10,10 @@ var charactersData = {
 
 // -------------------------------------------------
 // вспомогательные функции
-// -------------------------------------------------
-// случайный индекс массива с числом элементов maxNumber
-var getRandomNumber = function (maxNumber) {
-  return Math.floor(Math.random() * maxNumber);
+
+// случайный индекс массива с числом элементов length
+var getRandomArrayIndex = function (length) {
+  return Math.floor(Math.random() * length);
 };
 
 // случайное логическое значение
@@ -23,7 +23,7 @@ var getRandomBoolean = function () {
 
 // случайный элемент массива
 var getRandomArrayElement = function (array) {
-  return array[getRandomNumber(array.length)];
+  return array[getRandomArrayIndex(array.length)];
 };
 // -------------------------------------------------
 
@@ -55,46 +55,47 @@ var createCharacters = function (charactersCount) {
 };
 
 // функция создания DOM-элемента на основе JS-объекта
-var createWizard = function (template, characterData) {
+var createWizard = function (template, charactersArrayElement) {
   var wizardElement = template.cloneNode(true);
 
-  wizardElement.querySelector('.setup-similar-label').textContent = characterData.name;
-  wizardElement.querySelector('.wizard-coat').style.fill = characterData.coatColor;
-  wizardElement.querySelector('.wizard-eyes').style.fill = characterData.eyesColor;
+  wizardElement.querySelector('.setup-similar-label').textContent = charactersArrayElement.name;
+  wizardElement.querySelector('.wizard-coat').style.fill = charactersArrayElement.coatColor;
+  wizardElement.querySelector('.wizard-eyes').style.fill = charactersArrayElement.eyesColor;
   return wizardElement;
 };
 
 // функция заполнения блока DOM-элементами на основе массива JS-объектов
-var fillWizardsList = function (template, charactersArray) {
+// возвращает готовый фрагмент разметки
+var createWizardsMarkup = function (charactersArray) {
   var fragment = document.createDocumentFragment();
+  // шаблон разметки для одного волшебника
+  var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
 
+  // заполняет разметку данными
   for (var i = 0; i < charactersArray.length; i++) {
-    var wizardElement = createWizard(template, charactersArray[i]);
+    var wizardElement = createWizard(similarWizardTemplate, charactersArray[i]);
     fragment.appendChild(wizardElement);
   }
   return fragment;
 };
 
-var initSetup = function (wizards) {
-  // шаблон
-  var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
+var initSetup = function () {
+  // заполнить массив случайными данными
+  var wizards = createCharacters(charactersData.COUNT);
 
-  // элемент-контейнер
-  var similarListElement = document.querySelector('.setup-similar-list');
   // заполнить список внутри контейнера
-  similarListElement.appendChild(fillWizardsList(similarWizardTemplate, wizards));
+  var similarListElement = document.querySelector('.setup-similar-list');
+  similarListElement.appendChild(createWizardsMarkup(wizards));
 
-  var setupSimilarElement = document.querySelector('.setup-similar');
   // показать контейнер с персонажами
+  var setupSimilarElement = document.querySelector('.setup-similar');
   setupSimilarElement.classList.remove('hidden');
 
-  var userDialog = document.querySelector('.setup');
   // показать окно
+  var userDialog = document.querySelector('.setup');
   userDialog.classList.remove('hidden');
 };
 
 // ----------------------------------------------
-// заполнить массив случайными данными
-var wizards = createCharacters(charactersData.COUNT);
 
-initSetup(wizards);
+initSetup();
