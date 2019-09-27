@@ -28,9 +28,9 @@ var getRandomArrayElement = function (array) {
 // -------------------------------------------------
 
 // функция генерации имени персонажа
-var getCharacterRandomName = function () {
-  var randomName = getRandomArrayElement(charactersData.NAMES);
-  var randomSurname = getRandomArrayElement(charactersData.SURNAMES);
+var getCharacterRandomFullName = function (names, surnames) {
+  var randomName = getRandomArrayElement(names);
+  var randomSurname = getRandomArrayElement(surnames);
 
   return getRandomBoolean() ? randomName + ' ' + randomSurname :
     randomSurname + ' ' + randomName;
@@ -39,7 +39,7 @@ var getCharacterRandomName = function () {
 // функция генерации случайного персонажа
 var createCharacter = function () {
   return {
-    name: getCharacterRandomName(),
+    name: getCharacterRandomFullName(charactersData.NAMES, charactersData.SURNAMES),
     coatColor: getRandomArrayElement(charactersData.COAT_COLORS),
     eyesColor: getRandomArrayElement(charactersData.EYES_COLORS),
   };
