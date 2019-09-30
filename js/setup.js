@@ -195,12 +195,20 @@ var userNameInput = form.querySelector('.setup-user-name');
 
 var setForm = function () {
   form.action = 'https://js.dump.academy/code-and-magick';
+
+  // убирает отправку формы нажатием Enter при крестике в фокусе
+  setupClose.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      evt.stopPropagation();
+    }
+  });
   // убирает выход по Esc при редактировании имени
   userNameInput.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
       evt.stopPropagation();
     }
   });
+
   userNameInput.addEventListener('invalid', function () {
     if (userNameInput.validity.tooShort) {
       userNameInput.setCustomValidity('Имя должно состоять минимум из 2-х символов');
