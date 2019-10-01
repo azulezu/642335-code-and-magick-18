@@ -194,8 +194,9 @@ var form = setup.querySelector('.setup-wizard-form');
 var userNameInput = form.querySelector('.setup-user-name');
 
 var setForm = function () {
+  // добавляет недостающие атрибуты
   form.action = 'https://js.dump.academy/code-and-magick';
-
+  userNameInput.minLength = 2;
   // убирает отправку формы нажатием Enter при крестике в фокусе
   setupClose.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
@@ -211,25 +212,15 @@ var setForm = function () {
 
   userNameInput.addEventListener('invalid', function () {
     if (userNameInput.validity.tooShort) {
-      userNameInput.setCustomValidity('Имя должно состоять минимум из 2-х символов');
+      userNameInput.setCustomValidity('Имя персонажа не может содержать менее 2 символов');
     } else if (userNameInput.validity.tooLong) {
-      userNameInput.setCustomValidity('Имя не должно превышать 25-ти символов');
+      userNameInput.setCustomValidity('Максимальная длина имени персонажа — 25 символов');
     } else if (userNameInput.validity.valueMissing) {
       userNameInput.setCustomValidity('Обязательное поле!');
     } else {
       userNameInput.setCustomValidity('');
     }
   });
-
-  userNameInput.addEventListener('input', function (evt) {
-    var target = evt.target;
-    if (target.value.length < 2) {
-      target.setCustomValidity('Имя должно состоять минимум из 2-х символов');
-    } else {
-      target.setCustomValidity('');
-    }
-  });
-
 };
 
 // ----------------------------------------------
