@@ -121,6 +121,8 @@ var openPopup = function () {
 
 var closePopup = function () {
   setup.classList.add('hidden');
+  document.removeEventListener('keydown', onPopupEscPress);
+
 };
 
 // функция добавляет обработчики окну настроек
