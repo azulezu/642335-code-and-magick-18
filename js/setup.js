@@ -91,7 +91,7 @@ var createWizardsMarkup = function (charactersArray) {
 // ----------------------------------------------
 // обработчики открытия/закрытия окна настроек
 
-var PopupEscPressHandler = function (evt) {
+var popupEscPressHandler = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     var setup = document.querySelector('.setup');
     closePopup(setup);
@@ -100,12 +100,12 @@ var PopupEscPressHandler = function (evt) {
 
 var openPopup = function (popup) {
   popup.classList.remove('hidden');
-  document.addEventListener('keydown', PopupEscPressHandler);
+  document.addEventListener('keydown', popupEscPressHandler);
 };
 
 var closePopup = function (popup) {
   popup.classList.add('hidden');
-  document.removeEventListener('keydown', PopupEscPressHandler);
+  document.removeEventListener('keydown', popupEscPressHandler);
 };
 
 // функция добавляет обработчики окну настроек
