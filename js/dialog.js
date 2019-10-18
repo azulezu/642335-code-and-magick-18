@@ -5,7 +5,13 @@
 // -------------------------------------------------
 
 (function () {
-  // ----------------------------------------------
+
+  var setup = document.querySelector('.setup');
+  // начальное положение окна
+  var SETUP_TOP = setup.style.top;
+  var SETUP_LEFT = setup.style.left;
+
+
   // обработчики открытия/закрытия окна настроек
 
   var popupEscPressHandler = function (evt) {
@@ -13,6 +19,8 @@
   };
 
   var openPopup = function (popup) {
+    popup.style.top = SETUP_TOP;
+    popup.style.left = SETUP_LEFT;
     popup.classList.remove('hidden');
     document.addEventListener('keydown', popupEscPressHandler);
   };
@@ -23,7 +31,6 @@
   };
 
   // ----------------------------------------------
-  var setup = document.querySelector('.setup');
   // интерактивные элементы окна
   var setupOpen = document.querySelector('.setup-open');
   var setupOpenIcon = document.querySelector('.setup-open-icon');
@@ -34,8 +41,8 @@
   setupClose.tabIndex = 0;
 
   //  добавляет обработчик перемещения окна
-  var dialogHandle = setup.querySelector('.upload');
-  window.doMovable(setup, dialogHandle);
+  var setupHandle = setup.querySelector('.upload');
+  window.doMovable(setup, setupHandle);
 
   //  добавляет обработчики открытия/закрытия окна настроек
   // чтобы показать блок setup
