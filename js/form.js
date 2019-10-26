@@ -7,7 +7,7 @@
 (function () {
   // функция красит элемент случайным цветом и заполняет поле ввода
   var setColor = function (colors, element, name) {
-    var currentColor = window.random.getRandomArrayElement(colors);
+    var currentColor = window.utils.getRandomArrayElement(colors);
     document.querySelector('input[name="' + name + '"]').value = currentColor;
     if (element.classList.value === 'setup-fireball-wrap') {
       element.style.backgroundColor = currentColor;

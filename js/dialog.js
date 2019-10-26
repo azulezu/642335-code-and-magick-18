@@ -42,7 +42,7 @@
 
   //  добавляет обработчик перемещения окна
   var setupHandle = setup.querySelector('.upload');
-  window.doMovable(setup, setupHandle);
+  window.makeMovable(setup, setupHandle);
 
   //  добавляет обработчики открытия/закрытия окна настроек
   // чтобы показать блок setup

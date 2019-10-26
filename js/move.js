@@ -1,15 +1,18 @@
 'use strict';
 
 // -------------------------------------------------
-// позволяет перемещать элемент
+// позволяет перемещать абсолютно позиционированный элемент
 // -------------------------------------------------
 
 (function () {
-  window.doMovable = function (element, handle) {
+  window.makeMovable = function (element, handle) {
+    var isDragged = false;
+    var startCoords = {};
 
     // обработка нажатия
     var MouseDownHandler = function (mousedownEvt) {
       mousedownEvt.preventDefault();
+      isDragged = false;
       startCoords.x = mousedownEvt.clientX;
       startCoords.y = mousedownEvt.clientY;
       document.addEventListener('mousemove', MouseMoveHandler);
@@ -19,7 +22,7 @@
     // обработка перемещения
     var MouseMoveHandler = function (moveEvt) {
       moveEvt.preventDefault();
-      dragged = true;
+      isDragged = true;
       var shift = {
         x: startCoords.x - moveEvt.clientX,
         y: startCoords.y - moveEvt.clientY
@@ -37,18 +40,19 @@
       mouseupEvt.preventDefault();
       document.removeEventListener('mousemove', MouseMoveHandler);
       document.removeEventListener('mouseup', MouseUpHandler);
-      if (dragged) {
+      if (isDragged) {
+
+        // удаляет показ окна выбора файла при клике на "ручку"
         var clickPreventDefaultHandler = function (clickEvt) {
           clickEvt.preventDefault();
           handle.removeEventListener('click', clickPreventDefaultHandler);
         };
+
         handle.addEventListener('click', clickPreventDefaultHandler);
       }
     };
 
     // -------------------------------------------------
-    var dragged = false;
-    var startCoords = {};
     handle.addEventListener('mousedown', MouseDownHandler);
   };
 })();

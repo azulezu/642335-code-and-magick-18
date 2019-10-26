@@ -16,37 +16,36 @@
 
   // функция генерации имени персонажа
   var getCharacterRandomFullName = function (names, surnames) {
-    var randomName = window.random.getRandomArrayElement(names);
-    var randomSurname = window.random.getRandomArrayElement(surnames);
+    var randomName = window.utils.getRandomArrayElement(names);
+    var randomSurname = window.utils.getRandomArrayElement(surnames);
 
-    return window.random.getRandomBoolean() ? randomName + ' ' + randomSurname :
+    return window.utils.getRandomBoolean() ? randomName + ' ' + randomSurname :
       randomSurname + ' ' + randomName;
   };
 
   // функция генерации случайного персонажа
-  var createCharacter = function () {
+  var createCharacter = function (charactersInfo) {
     return {
-      name: getCharacterRandomFullName(charactersData.NAMES, charactersData.SURNAMES),
-      coatColor: window.random.getRandomArrayElement(charactersData.COAT_COLORS),
-      eyesColor: window.random.getRandomArrayElement(charactersData.EYES_COLORS),
+      name: getCharacterRandomFullName(charactersInfo.NAMES, charactersInfo.SURNAMES),
+      coatColor: window.utils.getRandomArrayElement(charactersInfo.COAT_COLORS),
+      eyesColor: window.utils.getRandomArrayElement(charactersInfo.EYES_COLORS),
     };
   };
 
   // функция генерации массива персонажей
   var createCharacters = function (charactersCount) {
-    var wizards = [];
+    var characters = [];
 
     for (var i = 0; i < charactersCount; i++) {
-      wizards.push(createCharacter());
+      characters.push(createCharacter(charactersData));
     }
-    return wizards;
+    return characters;
   };
 
   // -------------------------------------------------
-  var wizards = createCharacters(charactersData.COUNT);
 
   window.data = {
-    wizards: wizards,
+    wizards: createCharacters(charactersData.COUNT),
     FIREBALL_COLORS: charactersData.FIREBALL_COLORS,
     COAT_COLORS: charactersData.COAT_COLORS,
     EYES_COLORS: charactersData.EYES_COLORS
