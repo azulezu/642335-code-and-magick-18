@@ -7,15 +7,17 @@
 (function () {
 
   var setup = document.querySelector('.setup');
+
   // начальное положение окна
   var SETUP_TOP = setup.style.top;
   var SETUP_LEFT = setup.style.left;
 
 
   // обработчики открытия/закрытия окна настроек
-
   var popupEscPressHandler = function (evt) {
-    window.utils.isEscEvent(evt, closePopup.bind(null, setup));
+    window.utils.isEscEvent(evt, function () {
+      closePopup(setup);
+    });
   };
 
   var openPopup = function (popup) {
@@ -49,14 +51,19 @@
   setupOpen.addEventListener('click', function () {
     openPopup(setup);
   });
-  setupOpen.addEventListener('keydown', function evt() {
-    window.utils.isEnterEvent(evt, openPopup.bind(null, setup));
+  setupOpen.addEventListener('keydown', function (evt) {
+    window.utils.isEnterEvent(evt, function () {
+      openPopup(setup);
+    });
   });
   // чтобы скрыть блок setup
   setupClose.addEventListener('click', function () {
     closePopup(setup);
   });
   setupClose.addEventListener('keydown', function (evt) {
-    window.utils.isEnterEvent(evt, closePopup.bind(null, setup));
+    window.utils.isEnterEvent(evt, function () {
+      closePopup(setup);
+    });
   });
+
 })();
