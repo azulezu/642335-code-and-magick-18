@@ -1,7 +1,7 @@
 # Учебный проект «Код и Магия» [![Build status][travis-image]][travis-url]
 
 * Студент: [Анна Зуева](https://up.htmlacademy.ru/javascript/18/user/642335).
-* Наставник: [Игорь Белогуров](https://htmlacademy.ru/profile/id1026635).
+* Наставник: [Александр Коновалов](https://htmlacademy.ru/profile/id281291).
 
 ---
 
