@@ -16,7 +16,7 @@
   // обработчики открытия/закрытия окна настроек
   var popupEscPressHandler = function (evt) {
     window.utils.isEscEvent(evt, function () {
-      closePopup(setup);
+      window.closePopup(setup);
     });
   };
 
@@ -27,7 +27,10 @@
     document.addEventListener('keydown', popupEscPressHandler);
   };
 
-  var closePopup = function (popup) {
+  // ***********************************
+  // нужно перенести в модуль утилит?
+  // ***********************************
+  window.closePopup = function (popup) {
     popup.classList.add('hidden');
     document.removeEventListener('keydown', popupEscPressHandler);
   };
@@ -49,20 +52,22 @@
   //  добавляет обработчики открытия/закрытия окна настроек
   // чтобы показать блок setup
   setupOpen.addEventListener('click', function () {
+    window.setup.showWizards();
     openPopup(setup);
   });
   setupOpen.addEventListener('keydown', function (evt) {
     window.utils.isEnterEvent(evt, function () {
+      window.setup.showWizards();
       openPopup(setup);
     });
   });
   // чтобы скрыть блок setup
   setupClose.addEventListener('click', function () {
-    closePopup(setup);
+    window.closePopup(setup);
   });
   setupClose.addEventListener('keydown', function (evt) {
     window.utils.isEnterEvent(evt, function () {
-      closePopup(setup);
+      window.closePopup(setup);
     });
   });
 

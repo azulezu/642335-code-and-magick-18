@@ -32,20 +32,31 @@
     };
   };
 
-  // функция генерации массива персонажей
+  // // функция генерации массива персонажей
+  // var createCharacters = function (charactersCount) {
+  //   var characters = [];
+  //
+  //   for (var i = 0; i < charactersCount; i++) {
+  //     characters.push(createCharacter(charactersData));
+  //   }
+  //   return characters;
+  // };
+
+  // функция генерации массива персонажей НЕ РАБОТАЕТ
   var createCharacters = function (charactersCount) {
     var characters = [];
 
-    for (var i = 0; i < charactersCount; i++) {
-      characters.push(createCharacter(charactersData));
-    }
-    return characters;
+    characters = window.backend.load(function (data) {
+      return data;
+    });
+    return characters.slice(charactersCount);
   };
 
   // -------------------------------------------------
 
   window.data = {
-    wizards: createCharacters(charactersData.COUNT),
+    // wizards: createCharacters(charactersData.COUNT),
+    // wizards: createCharacters(charactersData.COUNT),
     FIREBALL_COLORS: charactersData.FIREBALL_COLORS,
     COAT_COLORS: charactersData.COAT_COLORS,
     EYES_COLORS: charactersData.EYES_COLORS
