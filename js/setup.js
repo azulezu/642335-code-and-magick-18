@@ -32,11 +32,13 @@
 
   // ----------------------------------------------
   // создает и показывает список волшебников
+  // **********************************************
+  // здесь ошибка
+  // **********************************************
   var showSimilarWizards = function () {
     var setupSimilarElement = document.querySelector('.setup-similar');
     var similarListElement = document.querySelector('.setup-similar-list');
     var NUMBER_OF_SIMILAR = 4;
-    window.data.wizards = [];
 
     window.backend.load(function (data) {
       // выбрать несколько волшебников из массива
