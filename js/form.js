@@ -67,14 +67,15 @@
   // изменение цвета персонажа по клику
   setWizardColor();
 
-  // передает данные формы на сервер
+  // заменяет стандартный submit и передает данные формы на сервер
   form.addEventListener('submit', function (evt) {
     window.backend.save(new FormData(form), function (response) {
       var setup = document.querySelector('.setup');
       window.closePopup(setup);
       var HAS_ERROR = false;
       window.message.show(JSON.stringify(response), HAS_ERROR);
-    }, function (response) {
+    },
+    function (response) {
       var HAS_ERROR = true;
       window.message.show(response, HAS_ERROR);
     });
