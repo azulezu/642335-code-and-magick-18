@@ -35,7 +35,7 @@
   var showSimilarWizards = function () {
     var setupSimilarElement = document.querySelector('.setup-similar');
     var similarListElement = document.querySelector('.setup-similar-list');
-    var NUMBER_OF_SIMILAR = 6;
+    var NUMBER_OF_SIMILAR = 4;
     window.data.wizards = [];
 
     window.backend.load(function (data) {
@@ -51,6 +51,7 @@
 
       // показать выбранных волшебников
       var showWizards = function (list, listElement, wizards) {
+        listElement.innerHTML = '';
         listElement.appendChild(createWizardsMarkup(wizards));
         // показывает контейнер с персонажами
         list.classList.remove('hidden');
