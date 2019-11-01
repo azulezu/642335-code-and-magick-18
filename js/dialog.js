@@ -27,9 +27,6 @@
     document.addEventListener('keydown', popupEscPressHandler);
   };
 
-  // ***********************************
-  // нужно перенести в модуль утилит?
-  // ***********************************
   window.closePopup = function (popup) {
     popup.classList.add('hidden');
     document.removeEventListener('keydown', popupEscPressHandler);
@@ -61,6 +58,7 @@
       openPopup(setup);
     });
   });
+
   // чтобы скрыть блок setup
   setupClose.addEventListener('click', function () {
     window.closePopup(setup);
