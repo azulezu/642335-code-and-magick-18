@@ -70,16 +70,18 @@
 
     // заменяет стандартный submit и передает данные формы на сервер
     form.addEventListener('submit', function (evt) {
-      window.backend.save(new FormData(form), function (response) {
-        var HAS_ERROR = false;
-        var setup = document.querySelector('.setup');
-        window.closePopup(setup);
-        window.message.show(JSON.stringify(response), HAS_ERROR);
-      },
-      function (response) {
-        var HAS_ERROR = true;
-        window.message.show(response, HAS_ERROR);
-      });
+      window.backend.save(new FormData(form),
+          function (response) { // onSuccess
+            var HAS_ERROR = false;
+            var setup = document.querySelector('.setup');
+            window.closePopup(setup);
+            // replace заменяет "," за которой нет пробела, на перевод строки
+            window.message.show('Форма отправляет: \n' + JSON.stringify(response).replace(/,(?!\s)/gi, '\n '), HAS_ERROR);
+          },
+          function (response) { // onError
+            var HAS_ERROR = true;
+            window.message.show('Не удалось отправить данные из формы \n' + response, HAS_ERROR);
+          });
       evt.preventDefault();
     });
   };

@@ -1,10 +1,12 @@
 'use strict';
 
-(function () {
+// -------------------------------------------------
+// создает разметку для списка персонажей
+// -------------------------------------------------
 
-  // -------------------------------------------------
-  // создание разметки для списка персонажей
-  // -------------------------------------------------
+(function () {
+  var NUMBER_OF_SIMILAR_WIZARDS = 4;
+
   // функция создания DOM-элемента на основе JS-объекта
   var createWizard = function (template, charactersArrayElement) {
     var wizardElement = template.cloneNode(true);
@@ -30,42 +32,36 @@
     return fragment;
   };
 
-  // ----------------------------------------------
-  // создает и показывает список волшебников
-  // **********************************************
-  // здесь ошибка
-  // **********************************************
+  // выбрать несколько случайных волшебников из массива
+  var getSomeWizards = function () {
+    var someWizards = [];
+    var numberSimilarElements = Math.min(NUMBER_OF_SIMILAR_WIZARDS, window.data.wizards.length);
+    for (var i = 0; i < numberSimilarElements; i++) {
+      someWizards.push(window.utils.getRandomArrayElement(window.data.wizards));
+    }
+    return someWizards;
+  };
+
+  // функция показывает выбранных волшебников
+  var renderWizards = function (list, listElement, wizards) {
+    listElement.innerHTML = '';
+    listElement.appendChild(createWizardsMarkup(wizards));
+    // показывает контейнер с персонажами
+    list.classList.remove('hidden');
+  };
+
+  // функция заполняет список волшебников
   var showSimilarWizards = function () {
     var setupSimilarElement = document.querySelector('.setup-similar');
     var similarListElement = document.querySelector('.setup-similar-list');
-    var NUMBER_OF_SIMILAR = 4;
 
-    window.backend.load(function (data) {
-      // выбрать несколько волшебников из массива
-      var getWizards = function (wizards) {
-        var someWizards = [];
-        var numberSimilarElements = Math.min(NUMBER_OF_SIMILAR, wizards.length);
-        for (var i = 0; i < numberSimilarElements; i++) {
-          someWizards.push(window.utils.getRandomArrayElement(wizards));
-        }
-        return someWizards;
-      };
-
-      // показать выбранных волшебников
-      var showWizards = function (list, listElement, wizards) {
-        listElement.innerHTML = '';
-        listElement.appendChild(createWizardsMarkup(wizards));
-        // показывает контейнер с персонажами
-        list.classList.remove('hidden');
-      };
-
-      window.data.wizards = getWizards(data);
-      showWizards(setupSimilarElement, similarListElement, window.data.wizards);
-    }, function (errorResponce) {
-      var HAS_ERROR = true;
-      window.message.show(errorResponce, HAS_ERROR);
+    if (window.data.wizards.length) {
+      renderWizards(setupSimilarElement, similarListElement, getSomeWizards());
+    } else {
+      window.data.loadWizards(function () {
+        renderWizards(setupSimilarElement, similarListElement, getSomeWizards());
+      });
     }
-    );
   };
 
   window.setup = {

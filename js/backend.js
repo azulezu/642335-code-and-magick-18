@@ -5,6 +5,9 @@
 // -------------------------------------------------
 
 (function () {
+  var TIMEOUT = 10000; // 10s
+  var STATUS = {SUCCESS: 200};
+
   // -------------------------------------------------
   // выполняет запрос данных к серверу
   var loadData = function (onSuccess, onError) {
@@ -17,7 +20,7 @@
     // ответ от сервера получен
     xhr.addEventListener('load', function () {
       switch (xhr.status) {
-        case 200:
+        case STATUS.SUCCESS:
           onSuccess(xhr.response);
           break;
         default:
@@ -33,7 +36,7 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 10000; // 10s
+    xhr.timeout = TIMEOUT;
     xhr.open('GET', URL);
     xhr.send();
   };
@@ -53,7 +56,7 @@
           onSuccess(xhr.response);
           break;
         default:
-          onError('Статус запроса: ' + xhr.status + '\nОшибка ' + xhr.statusText);
+          onError('Статус запроса: ' + xhr.status + xhr.statusText);
       }
     });
 
@@ -65,7 +68,7 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 10000; // 10s
+    xhr.timeout = TIMEOUT; // 10s
     xhr.open('POST', URL);
     xhr.send(formData);
   };

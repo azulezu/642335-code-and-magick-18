@@ -10,7 +10,7 @@
   var setupMessageBox = function (infoString, isError) {
     var MESSAGE_BOX_MARKUP =
         '<h3><\/h3>'
-        + '<p class="message-box__string"><\/p>'
+        + '<pre class="message-box__string"></pre>'
         + '<button class="message-box__button">Закрыть<\/button>';
 
     messageBox.classList.add('hidden');

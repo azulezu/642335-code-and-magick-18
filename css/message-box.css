@@ -6,6 +6,7 @@
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     min-width: 200px;
+    max-width: 80%;
     padding: 40px;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -29,6 +30,12 @@
 
 .message-box--error h3 {
     color: darkred;
+}
+
+.message-box__string {
+  margin: 20px;
+  white-space: pre-wrap;
+  text-align: left;
 }
 
 .message-box__button {
